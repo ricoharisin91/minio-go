@@ -94,15 +94,7 @@ func (c Client) StatObject(bucketName, objectName string) (ObjectInfo, error) {
 	// Parse Last-Modified has http time format.
 	date, err := time.Parse(http.TimeFormat, resp.Header.Get("Last-Modified"))
 	if err != nil {
-		return ObjectInfo{}, ErrorResponse{
-			Code:       "InternalError",
-			Message:    "Last-Modified time format is invalid. " + reportIssue,
-			BucketName: bucketName,
-			Key:        objectName,
-			RequestID:  resp.Header.Get("x-amz-request-id"),
-			HostID:     resp.Header.Get("x-amz-id-2"),
-			Region:     resp.Header.Get("x-amz-bucket-region"),
-		}
+		date, err = time.Parse("Mon, 02 Jan 2006 15:04:05 CET", resp.Header.Get("Last-Modified"))
 	}
 	// Fetch content type if any present.
 	contentType := strings.TrimSpace(resp.Header.Get("Content-Type"))
